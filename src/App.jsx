@@ -14,10 +14,11 @@ function App() {
   }
 
   const colorCode = {
-    "0": "green",
-    "1": "pink",
-    "2": "red",
-    "3": "purple"
+    0: "green",
+    1: "pink",
+    2: "red",
+    3: "purple",
+    4: "blue"
   }
 
   const [grid, setGrid] = useState(matrix)
@@ -34,7 +35,7 @@ function App() {
   const handleGridClick = (idx, idx2) => {
     if (start) {
       var newGrid = [...grid]
-      newGrid[idx][idx2] = "2"
+      newGrid[idx][idx2] = 2
       if (currentStart) {
         newGrid[currentStart[0]][currentStart[1]] = 0
       }
@@ -44,7 +45,7 @@ function App() {
     }
     else if (end) {
       var newGrid = [...grid]
-      newGrid[idx][idx2] = "3"
+      newGrid[idx][idx2] = 3
       if (currentEnd) {
         newGrid[currentEnd[0]][currentEnd[1]] = 0
       }
@@ -56,16 +57,44 @@ function App() {
 
   const handleGridMouseDown = (e, idx, idx2) => {
     if (e.buttons === 1) {
-      if(obstacles){
+      if (obstacles) {
         var newGrid = [...grid]
-        newGrid[idx][idx2] = "1"
+        newGrid[idx][idx2] = 1
         setGrid(newGrid)
       }
     }
   }
 
-  const findPathDj = (e)=>{
+  const getAdjacentNodes = (x, y) => {
+    var adjacents = []
+    for (var i = x - 1; i < x + 2; i++) {
+      if (i < 0 || i > Griddim - 1) { continue }
+      for (var j = y - 1; j < y + 2; j++) {
+        if (j < 0 || j > Griddim - 1) { continue }
+        if (grid[i][j] === 0) {
+          console.log(i,j);
+          adjacents.push([i][j])
+        }
+      }
+    }
+    return adjacents
+  }
 
+  const findPathDj = (e) => {
+    var found = false
+    const dist = []
+    for (var i = 0; i < Griddim; i++) {
+      dist[i] = []
+      for (var j = 0; j < Griddim; j++) {
+        dist[i][j] = -1
+      }
+    }
+    dist[currentStart[0]][currentStart[1]] = 0
+    var ptr = currentStart
+    while (!found) {
+      console.log(getAdjacentNodes(ptr[0], ptr[1]));
+      break;
+    }
   }
 
   return (
@@ -76,13 +105,13 @@ function App() {
             setStart(!start)
           }
         }>Select start point</button>
-        
+
         <button className={end ? "selected" : ""} onClick={
           (e) => {
             setEnd(!end)
           }
         }>Select end point</button>
-        
+
         <button className={obstacles ? "selected" : ""} onClick={
           (e) => {
             setObstacles(!obstacles)
@@ -107,7 +136,7 @@ function App() {
       <div><br />
         <button onClick={findPathDj} disabled={(!(currentStart && currentEnd))}>Find Path</button>
       </div>
-    
+
     </div>
   )
 }
